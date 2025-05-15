@@ -1,0 +1,88 @@
+---
+import "../styles/global.css";
+---
+
+<form id="video-form" class="space-y-4 bg-white p-6 rounded shadow-md">
+  <div>
+    <label for="predio" class="block text-sm font-medium">Predio</label>
+    <select id="predio" class="mt-1 block w-full border rounded">
+      <option value="Laestacion">Laestacion</option>
+      <option value="Camp Nou">Camp Nou</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="cancha" class="block text-sm font-medium">Cancha</label>
+    <select id="cancha" class="mt-1 block w-full border rounded"></select>
+  </div>
+
+  <div>
+    <label for="dia" class="block text-sm font-medium">Día</label>
+    <input type="date" id="dia" class="mt-1 block w-full border rounded" />
+  </div>
+
+  <div>
+    <label for="hora" class="block text-sm font-medium">Hora</label>
+    <select id="hora" class="mt-1 block w-full border rounded">
+      <option value="10:00">10:00</option>
+      <option value="12:00">12:00</option>
+      <option value="14:00">14:00</option>
+    </select>
+  </div>
+
+  <button type="button" id="buscar-btn" class="px-4 py-2 bg-blue-600 text-white rounded">
+    Buscar Video
+  </button>
+
+  <div id="video-container" class="mt-4"></div>
+</form>
+
+<script>
+  const predios = {
+    Laestacion: ["Cancha 1", "Cancha 2"],
+    "Camp Nou": ["Cancha A", "Cancha B"]
+  };
+
+  const predioSelect = document.getElementById("predio");
+  const canchaSelect = document.getElementById("cancha");
+  const diaInput = document.getElementById("dia");
+  const horaSelect = document.getElementById("hora");
+  const buscarBtn = document.getElementById("buscar-btn");
+  const videoContainer = document.getElementById("video-container");
+
+  function actualizarCanchas() {
+    const selectedPredio = predioSelect.value;
+    const canchas = predios[selectedPredio];
+
+    canchaSelect.innerHTML = "";
+    canchas.forEach((cancha) => {
+      const opt = document.createElement("option");
+      opt.value = cancha;
+      opt.textContent = cancha;
+      canchaSelect.appendChild(opt);
+    });
+  }
+
+  predioSelect.addEventListener("change", actualizarCanchas);
+  window.addEventListener("DOMContentLoaded", actualizarCanchas);
+
+  buscarBtn.addEventListener("click", () => {
+    const predio = predioSelect.value;
+    const cancha = canchaSelect.value;
+    const dia = diaInput.value;
+    const hora = horaSelect.value;
+
+    if (!predio || !cancha || !dia || !hora) {
+      alert("Por favor completa todos los campos");
+      return;
+    }
+
+    const videoPath = `/videos/${predio}/${cancha}/${dia}/${hora}.mp4`;
+    videoContainer.innerHTML = `
+      <video controls class="w-full">
+        <source src="${videoPath}" type="video/mp4">
+        Tu navegador no soporta la reproducción de video.
+      </video>
+    `;
+  });
+</script>
