@@ -17,17 +17,8 @@ import "../styles/global.css";
   </div>
 
   <div>
-    <label for="dia" class="block text-sm font-medium">Día</label>
-    <input type="date" id="dia" class="mt-1 block w-full border rounded" />
-  </div>
-
-  <div>
-    <label for="hora" class="block text-sm font-medium">Hora</label>
-    <select id="hora" class="mt-1 block w-full border rounded">
-      <option value="10:00">10:00</option>
-      <option value="12:00">12:00</option>
-      <option value="14:00">14:00</option>
-    </select>
+    <label for="fechaHora" class="block text-sm font-medium">Fecha y Hora</label>
+    <input type="datetime-local" id="fechaHora" class="mt-1 block w-full border rounded" />
   </div>
 
   <button type="button" id="buscar-btn" class="px-4 py-2 bg-blue-600 text-white rounded">
@@ -45,8 +36,7 @@ import "../styles/global.css";
 
   const predioSelect = document.getElementById("predio");
   const canchaSelect = document.getElementById("cancha");
-  const diaInput = document.getElementById("dia");
-  const horaSelect = document.getElementById("hora");
+  const fechaHoraInput = document.getElementById("fechaHora");
   const buscarBtn = document.getElementById("buscar-btn");
   const videoContainer = document.getElementById("video-container");
 
@@ -69,15 +59,15 @@ import "../styles/global.css";
   buscarBtn.addEventListener("click", () => {
     const predio = predioSelect.value;
     const cancha = canchaSelect.value;
-    const dia = diaInput.value;
-    const hora = horaSelect.value;
+    const fechaHora = fechaHoraInput.value;
 
-    if (!predio || !cancha || !dia || !hora) {
+    if (!predio || !cancha || !fechaHora) {
       alert("Por favor completa todos los campos");
       return;
     }
 
-    const videoPath = `/videos/${predio}/${cancha}/${dia}/${hora}.mp4`;
+    const [fecha, hora] = fechaHora.split("T");
+    const videoPath = `/videos/${predio}/${cancha}/${fecha}/${hora}.mp4`;
     videoContainer.innerHTML = `
       <video controls class="w-full">
         <source src="${videoPath}" type="video/mp4">
@@ -86,3 +76,4 @@ import "../styles/global.css";
     `;
   });
 </script>
+
