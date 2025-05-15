@@ -13,7 +13,12 @@
     "@astrojs/vercel": "^8.1.4",
     "@tailwindcss/vite": "^4.1.6",
     "astro": "^5.7.13",
+    "jsonwebtoken": "^9.0.2",
+    "mercadopago": "^2.6.0",
     "tailwindcss": "^4.1.6",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9"
   }
 }

@@ -3,6 +3,7 @@ import "../styles/global.css";
 ---
 
 <form id="video-form" class="space-y-4 bg-white p-6 rounded-xl shadow-md">
+    <h2 class="text-xl font-bold mb-4 text-center">Buscar Video de Partido</h2>
   <div>
     <label for="predio" class="block text-sm font-medium">Predio</label>
     <select id="predio" class="mt-1 block w-full border rounded">
@@ -16,10 +17,24 @@ import "../styles/global.css";
     <select id="cancha" class="mt-1 block w-full border rounded"></select>
   </div>
 
-  <div>
-    <label for="fechaHora" class="block text-sm font-medium">Fecha y Hora</label>
-    <input type="datetime-local" id="fechaHora" class="mt-1 block w-full border rounded" />
-  </div>
+<div>
+  <label for="fecha" class="block text-sm font-medium">Fecha</label>
+  <input type="date" id="fecha" class="mt-1 block w-full border rounded" />
+</div>
+
+<div>
+  <label for="horaRango" class="block text-sm font-medium">Hora</label>
+  <select id="horaRango" class="mt-1 block w-full border rounded">
+    <option value="16:00">16:00 - 17:00</option>
+    <option value="17:00">17:00 - 18:00</option>
+    <option value="18:00">18:00 - 19:00</option>
+    <option value="19:00">19:00 - 20:00</option>
+    <option value="20:00">20:00 - 21:00</option>
+    <option value="21:00">21:00 - 22:00</option>
+    <option value="22:00">22:00 - 23:00</option>
+  </select>
+</div>
+
 
   <button type="button" id="buscar-btn" class="px-4 py-2 w-full  bg-blue-600 text-white rounded">
     Buscar Video
@@ -36,7 +51,8 @@ import "../styles/global.css";
 
   const predioSelect = document.getElementById("predio");
   const canchaSelect = document.getElementById("cancha");
-  const fechaHoraInput = document.getElementById("fechaHora");
+  const fechaInput = document.getElementById("fecha");
+  const horaRangoSelect = document.getElementById("horaRango");
   const buscarBtn = document.getElementById("buscar-btn");
   const videoContainer = document.getElementById("video-container");
 
@@ -56,24 +72,45 @@ import "../styles/global.css";
   predioSelect.addEventListener("change", actualizarCanchas);
   window.addEventListener("DOMContentLoaded", actualizarCanchas);
 
-  buscarBtn.addEventListener("click", () => {
-    const predio = predioSelect.value;
-    const cancha = canchaSelect.value;
-    const fechaHora = fechaHoraInput.value;
+  buscarBtn.addEventListener("click", async () => {
+  const predio = predioSelect.value;
+  const cancha = canchaSelect.value;
+  const fecha = fechaInput.value;
+  const hora = horaRangoSelect.value;
 
-    if (!predio || !cancha || !fechaHora) {
-      alert("Por favor completa todos los campos");
-      return;
-    }
+  if (!predio || !cancha || !fecha || !hora) {
+    alert("Por favor completa todos los campos");
+    return;
+  }
 
-    const [fecha, hora] = fechaHora.split("T");
-    const videoPath = `/videos/${predio}/${cancha}/${fecha}/${hora}.mp4`;
-    videoContainer.innerHTML = `
-      <video controls class="w-full">
-        <source src="${videoPath}" type="video/mp4">
-        Tu navegador no soporta la reproducción de video.
-      </video>
-    `;
+  const payload = {
+    predio,
+    cancha,
+    fecha,
+    hora,
+    email: prompt("Ingrese su correo electrónico para enviar el enlace tras el pago:")
+  };
+
+  const response = await fetch("/api/crear-preferencia", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
   });
+
+  const { init_point, preview_url } = await response.json();
+
+  videoContainer.innerHTML = `
+    <p class="text-center mb-2">Vista previa de 10 segundos:</p>
+    <video controls class="w-full">
+      <source src="${preview_url}" type="video/mp4">
+      Tu navegador no soporta la reproducción de video.
+    </video>
+    <a href="${init_point}" target="_blank" class="block mt-4 text-center bg-green-600 text-white py-2 rounded">
+      Pagar y Obtener Video Completo
+    </a>
+  `;
+});
+
 </script>
+
 
